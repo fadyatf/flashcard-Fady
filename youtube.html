@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Clone</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #0f0f0f;
+            color: #f1f1f1;
+        }
+        .sidebar {
+            transition: width 0.3s ease;
+        }
+        .sidebar-closed {
+            width: 72px;
+        }
+        .sidebar-open {
+            width: 240px;
+        }
+        .sidebar-item-label {
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+        }
+        .sidebar-closed .sidebar-item-label {
+            opacity: 0;
+            visibility: hidden;
+            white-space: nowrap;
+        }
+        .sidebar-open .sidebar-item-label {
+            opacity: 1;
+            visibility: visible;
+        }
+        .video-thumbnail-container:hover .thumbnail-overlay {
+            opacity: 1;
+        }
+        .slider-container {
+            overflow: hidden;
+            position: relative;
+        }
+        .slider-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .slider-item {
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body class="text-white bg-[#0f0f0f]">
+    <div class="flex flex-col h-screen">
+        <!-- Header -->
+        <header class="flex items-center justify-between h-14 px-4 bg-[#0f0f0f] border-b border-gray-700 z-30">
+            <div class="flex items-center space-x-4">
+                <button id="menu-btn" class="p-2 rounded-full hover:bg-gray-700 focus:outline-none">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+                <div class="flex items-center">
+                    <!-- NOTE: Local file path used as a placeholder. This will not render in a browser. -->
+                    <img src="C:\Users\fady\OneDrive\Pictures\image_fx (35).jpg" alt="YouTube Logo" class="h-8 w-8 object-cover rounded-full mr-2" onerror="this.style.display='none'">
+                    <svg class="w-24 h-6 hidden sm:block" viewBox="0 0 90 20" preserveAspectRatio="xMidYMid meet" fill="currentColor">
+                         <g>
+                          <path d="M27.9727 3.12324C27.6435 1.89323 26.6768 0.926623 25.4468 0.597366C23.2197 2.24242e-07 14.285 0 14.285 0C14.285 0 5.35041 2.24242e-07 3.12323 0.597366C1.89323 0.926623 0.926623 1.89323 0.597366 3.12324C2.24242e-07 5.35041 0 10 0 10C0 10 2.24242e-07 14.6496 0.597366 16.8768C0.926623 18.1068 1.89323 19.0734 3.12323 19.4026C5.35041 20 14.285 20 14.285 20C14.285 20 23.2197 20 25.4468 19.4026C26.6768 19.0734 27.6435 18.1068 27.9727 16.8768C28.5701 14.6496 28.5701 10 28.5701 10C28.5701 10 28.5701 5.35041 27.9727 3.12324Z" fill="#FF0000"></path>
+                          <path d="M11.4253 14.2854L11.4253 5.7146L18.8495 10.0001L11.4253 14.2854Z" fill="white"></path>
+                        </g>
+                    </svg>
+                    <span class="text-2xl font-semibold ml-1">YouTube</span>
+                </div>
+            </div>
+            <div class="flex-1 flex justify-center px-4 lg:px-10">
+                <div class="w-full max-w-2xl flex items-center">
+                    <input type="text" placeholder="Search" class="w-full h-10 px-4 rounded-l-full bg-gray-900 border border-gray-700 focus:outline-none focus:border-blue-500">
+                    <button class="bg-gray-700 hover:bg-gray-600 h-10 px-6 rounded-r-full border border-gray-700 border-l-0">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button class="ml-4 p-2 rounded-full bg-gray-800 hover:bg-gray-700">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button class="p-2 rounded-full hover:bg-gray-700">
+                    <i class="fas fa-video"></i>
+                </button>
+                <button class="p-2 rounded-full hover:bg-gray-700">
+                    <i class="fas fa-bell"></i>
+                </button>
+                <!-- NOTE: Local file path used as a placeholder. This will not render in a browser. -->
+                <img src="C:\Users\fady\OneDrive\Pictures\image_fx (35).jpg" alt="User Avatar" class="w-8 h-8 rounded-full cursor-pointer" onerror="this.alt='Avatar'; this.style.backgroundColor='#333';">
+            </div>
+        </header>
+
+        <div class="flex flex-1 overflow-hidden">
+            <!-- Sidebar -->
+            <aside id="sidebar" class="sidebar sidebar-open bg-[#0f0f0f] overflow-y-auto">
+                 <nav class="p-3">
+                    <a href="#" class="flex items-center px-3 py-2 rounded-lg bg-gray-700">
+                        <i class="fas fa-home w-6 text-center"></i>
+                        <span class="ml-4 sidebar-item-label">Home</span>
+                    </a>
+                    <a href="#" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-800">
+                        <i class="fas fa-bolt w-6 text-center"></i>
+                        <span class="ml-4 sidebar-item-label">Shorts</span>
+                    </a>
+                    <a href="#" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-800">
+                        <i class="fas fa-folder-plus w-6 text-center"></i>
+                        <span class="ml-4 sidebar-item-label">Subscriptions</span>
+                    </a>
+                    <hr class="my-3 border-gray-700">
+                     <a href="#" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-800">
+                        <i class="fas fa-user-circle w-6 text-center"></i>
+                        <span class="ml-4 sidebar-item-label">Your Channel</span>
+                    </a>
+                    <a href="#" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-800">
+                        <i class="fas fa-history w-6 text-center"></i>
+                        <span class="ml-4 sidebar-item-label">History</span>
+                    </a>
+                     <a href="#" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-800">
+                        <i class="fas fa-play-circle w-6 text-center"></i>
+                        <span class="ml-4 sidebar-item-label">Your Videos</span>
+                    </a>
+                     <a href="#" class="flex items-center px-3 py-2 rounded-lg hover:bg-gray-800">
+                        <i class="fas fa-clock w-6 text-center"></i>
+                        <span class="ml-4 sidebar-item-label">Watch Later</span>
+                    </a>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto">
+                <!-- Image Slider -->
+                <div class="mb-8">
+                    <h2 class="text-xl font-bold mb-4">Featured Images</h2>
+                    <div class="slider-container rounded-lg">
+                        <div class="slider-track">
+                            <!-- NOTE: Local file path used as a placeholder. This will not render in a browser. -->
+                            <div class="slider-item">
+                                <img src="C:\Users\fady\OneDrive\Pictures\image_fx (35).jpg" alt="Featured Image 1" class="w-full h-48 md:h-64 lg:h-80 object-cover" onerror="this.src='https://placehold.co/1200x400/1a1a1a/f1f1f1?text=Local+Image+Cannot+Load';">
+                            </div>
+                            <div class="slider-item">
+                                <img src="C:\Users\fady\OneDrive\Pictures\image_fx (35).jpg" alt="Featured Image 2" class="w-full h-48 md:h-64 lg:h-80 object-cover" onerror="this.src='https://placehold.co/1200x400/1a1a1a/f1f1f1?text=C:\\Users\\...';">
+                            </div>
+                             <div class="slider-item">
+                                <img src="C:\Users\fady\OneDrive\Pictures\image_fx (35).jpg" alt="Featured Image 3" class="w-full h-48 md:h-64 lg:h-80 object-cover" onerror="this.src='https://placehold.co/1200x400/1a1a1a/f1f1f1?text=Image+Placeholder+3';">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-4 gap-y-8">
+                    <!-- Repeat Video Item -->
+                    <div class="video-item group" v-for="n in 20">
+                        <div class="relative video-thumbnail-container">
+                             <!-- NOTE: Local file path used as a placeholder. This will not render in a browser. -->
+                            <video class="w-full rounded-lg bg-gray-800" muted onmouseover="this.play()" onmouseout="this.pause(); this.currentTime=0;">
+                                <source src="C:\Users\fady\OneDrive\Pictures\Video_Ready_Fady_s_Content.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                             <div class="absolute inset-0 bg-black bg-opacity-20 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                <i class="fas fa-play text-white text-4xl"></i>
+                            </div>
+                            <span class="absolute bottom-1 right-1 bg-black bg-opacity-75 text-white text-xs px-1 rounded">12:34</span>
+                        </div>
+                        <div class="flex items-start mt-2">
+                             <!-- NOTE: Local file path used as a placeholder. This will not render in a browser. -->
+                            <img src="C:\Users\fady\OneDrive\Pictures\image_fx (35).jpg" alt="Channel Avatar" class="w-9 h-9 rounded-full mr-3" onerror="this.alt='Avatar'; this.style.backgroundColor='#333';">
+                            <div class="flex-1">
+                                <h3 class="text-sm font-medium leading-tight">Video Title Placeholder - Fady's Content</h3>
+                                <p class="text-xs text-gray-400 mt-1">Fady's Channel</p>
+                                <p class="text-xs text-gray-400">1.2M views &bull; 2 days ago</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Repeat Video Item -->
+                     <!-- Add more video items here to fill the page -->
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuBtn = document.getElementById('menu-btn');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.querySelector('main');
+
+            // --- Sidebar Toggle ---
+            let isSidebarOpen = true;
+            menuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('sidebar-open');
+                sidebar.classList.toggle('sidebar-closed');
+                isSidebarOpen = !isSidebarOpen;
+            });
+            
+            // --- Auto-repeating video grid for demonstration ---
+            const videoGrid = document.querySelector('.grid');
+            const videoItemTemplate = videoGrid.querySelector('.video-item').cloneNode(true);
+            videoGrid.innerHTML = ''; // Clear original item
+            for(let i = 0; i < 24; i++) {
+                const newItem = videoItemTemplate.cloneNode(true);
+                // Randomize views and time ago for variety
+                newItem.querySelector('.text-gray-400:last-child').textContent = `${(Math.random() * 5).toFixed(1)}M views • ${Math.ceil(Math.random() * 14)} days ago`;
+                videoGrid.appendChild(newItem);
+            }
+
+            // --- Image Slider Logic ---
+            const sliderTrack = document.querySelector('.slider-track');
+            const sliderItems = document.querySelectorAll('.slider-item');
+            let currentIndex = 0;
+            const totalSlides = sliderItems.length;
+
+            if (totalSlides > 1) {
+                setInterval(() => {
+                    currentIndex = (currentIndex + 1) % totalSlides;
+                    sliderTrack.style.transform = `translateX(-${currentIndex * 100}%)`;
+                }, 4000); // Change slide every 4 seconds
+            }
+
+            // --- Video Hover Play Logic ---
+            // The logic is embedded in the HTML using onmouseover and onmouseout for simplicity
+            // This is just a note that it's intentionally done this way for this demo.
+        });
+    </script>
+</body>
+</html>
